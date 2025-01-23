@@ -109,7 +109,45 @@ filtered_df = df[mask]
 if filtered_df.empty:
     st.warning("No data available for the selected filters. Please adjust your selection.")
     st.stop()
+st.header("🏆 Job Market Leaderboard")
+col1, col2, col3 = st.columns(3)
 
+with col1:
+    # Top Jobs by Number of Applicants
+    top_applicant_jobs = filtered_df.nlargest(10, 'Number of Applicants')
+    st.subheader("Most Competitive Jobs")
+    for idx, row in top_applicant_jobs.iterrows():
+        st.markdown(f"""
+        **{row['Job Title']}** at *{row['Company Name']}*
+        - 📍 {row['Job Location']}
+        - 👥 {row['Number of Applicants']} Applicants
+        - 💰 {row['Salary Range']}
+        """)
+
+with col2:
+    # Top Paying Jobs
+    top_salary_jobs = filtered_df.nlargest(10, 'avg_salary')
+    st.subheader("Highest Paying Jobs")
+    for idx, row in top_salary_jobs.iterrows():
+        st.markdown(f"""
+        **{row['Job Title']}** at *{row['Company Name']}*
+        - 💰 ₹{row['avg_salary']:.2f} LPA
+        - 📍 {row['Job Location']}
+        - 📊 {row['Job Type']}
+        """)
+
+with col3:
+    # Emerging Jobs (Recently Posted High-Demand Jobs)
+    recent_jobs = filtered_df.sort_values('Posted_Date', ascending=False).head(10)
+    st.subheader("Emerging Job Opportunities")
+    for idx, row in recent_jobs.iterrows():
+        st.markdown(f"""
+        **{row['Job Title']}** at *{row['Company Name']}*
+        - 📅 Posted {row['Posted_Date'].strftime('%d %b %Y')}
+        - 📍 {row['Job Location']}
+        - 🕒 {row['Experience Required']} Experience
+        """)
+        
 # Key Metrics
 st.header("📊 Key Metrics")
 col1, col2, col3, col4 = st.columns(4)
